@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const HttpError = require('../models/http-error')
 
-const DUMMY_PLACES = [
+let DUMMY_PLACES = [
   {
     id : 'p1',
     title : 'Empire State Building',
@@ -27,13 +27,13 @@ exports.getPlaceById = (req, res, next) => {
 
 exports.getPlacesByUserId = (req, res) => {
   const userId = req.params.userId;
-  const place = DUMMY_PLACES.find(p => p.creator === userId)
-  if(!place){
+  const places = DUMMY_PLACES.filter(p => p.creator === userId)
+  if(!places || places.length === 0){
     // if you use a synchronous code, you can use Throw
     // if you use an asynchronous code, you use next()
-    throw HttpError("Can't find place for this user.", 404)
+    throw new HttpError("Can't find places for this user.", 404)
   }
-  res.json({ place })
+  res.json({ places })
 }
 
 exports.createPlace = (req, res, next) => {
@@ -49,4 +49,23 @@ exports.createPlace = (req, res, next) => {
 
   DUMMY_PLACES.push(createdPlace);
   res.status(201).json({place : createdPlace})
+}
+
+exports.updatePlace= (req, res, next) => {
+  const { title, description } = req.body;
+  const placeId = req.params.placeId
+
+  const updatePlace = {...DUMMY_PLACES.find(p => p.id === placeId)};
+  const placeIndex = DUMMY_PLACES.findIndex(p => p.id === placeId)
+  updatePlace.title = title;
+  updatePlace.description = description;
+
+  DUMMY_PLACES[placeIndex] = updatePlace;
+  res.status(200).json(updatePlace)
+}
+
+exports.deletePlace= (req, res, next) => {
+  const placeId = req.params.placeId
+  DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId)
+  res.status(200).json({ message : "Place deleted" })
 }

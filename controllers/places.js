@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const HttpError = require('../models/http-error')
 
 const DUMMY_PLACES = [
@@ -37,6 +39,7 @@ exports.getPlacesByUserId = (req, res) => {
 exports.createPlace = (req, res, next) => {
   const { title, description, coordinates, address, creator } = req.body;
   const createdPlace = {
+    id : uuidv4(),
     title,
     description,
     location : coordinates,

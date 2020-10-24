@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
+const Place = require('../models/places');
 
 let DUMMY_PLACES = [
   {
@@ -18,13 +19,27 @@ let DUMMY_PLACES = [
   },
 ];
 
-exports.getPlaceById = (req, res, next) => {
+exports.getPlaceById = async (req, res, next) => {
   const placeId = req.params.placeId;
-  const place = DUMMY_PLACES.find((p) => p.id === placeId);
-  if (!place) {
-    return next(new HttpError("Can't find place for this id.", 404));
+
+  let place;
+
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not found a place',
+      500
+    );
+    return next(error);
   }
-  res.json({ place });
+  if (!place) {
+    const error = new HttpError("Can't find place for this id.", 404);
+    return next(error);
+  }
+  // Convert the mongoose object to a Javascript object with the method .toObject
+  // turn _id to id by passing as argument {getters : true}
+  res.json({ place: place.toObject({ getters: true }) });
 };
 
 exports.getPlacesByUserId = (req, res) => {
@@ -56,16 +71,22 @@ exports.createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuidv4(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image:
+      'https://upload.wikimedia.org/wikipedia/commons/1/10/Empire_State_Building_%28aerial_view%29.jpg',
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  try {
+    await createdPlace.save();
+  } catch (err) {
+    const error = new HttpError(err, 500);
+    return next(error);
+  }
   res.status(201).json({ place: createdPlace });
 };
 

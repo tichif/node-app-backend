@@ -42,15 +42,29 @@ exports.getPlaceById = async (req, res, next) => {
   res.json({ place: place.toObject({ getters: true }) });
 };
 
-exports.getPlacesByUserId = (req, res) => {
+exports.getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.userId;
-  const places = DUMMY_PLACES.filter((p) => p.creator === userId);
+
+  let places;
+
+  try {
+    places = await Place.find({ creator: userId });
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not found places',
+      500
+    );
+    return next(error);
+  }
+
   if (!places || places.length === 0) {
     // if you use a synchronous code, you can use Throw
     // if you use an asynchronous code, you use next()
-    throw new HttpError("Can't find places for this user.", 404);
+    return next(new HttpError("Can't find places for this user.", 404));
   }
-  res.json({ places });
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
 };
 
 exports.createPlace = async (req, res, next) => {

@@ -1,23 +1,8 @@
-const { v4: uuidv4 } = require('uuid');
 const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
-const Place = require('../models/places');
-
-let DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous wold scrapper in the world',
-    location: {
-      lat: 40.7481563,
-      lng: 73.9856961,
-    },
-    adress: '20 W 34th St, New York, NY 10001',
-    creator: 'u1',
-  },
-];
+const Place = require('../models/place');
 
 exports.getPlaceById = async (req, res, next) => {
   const placeId = req.params.placeId;

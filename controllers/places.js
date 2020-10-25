@@ -92,9 +92,8 @@ exports.createPlace = async (req, res, next) => {
 exports.updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError(
-      'Invalid inputs, passed, please checked your data',
-      422
+    return next(
+      new HttpError('Invalid inputs, passed, please checked your data', 422)
     );
   }
 

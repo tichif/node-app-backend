@@ -3,17 +3,18 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
-const DUMMY_USERS = [
-  {
-    id: 'u1',
-    name: 'Charly',
-    email: 'charlby5@gmail.com',
-    password: '12345678',
-  },
-];
+exports.getUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, '-password');
+  } catch (err) {
+    const error = new HttpError('Fetching users failed !!!', 500);
+    return next(error);
+  }
 
-exports.getUsers = (req, res, next) => {
-  res.status(200).json({ users: DUMMY_USERS });
+  res
+    .status(200)
+    .json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
 exports.signup = async (req, res, next) => {

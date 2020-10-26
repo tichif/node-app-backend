@@ -10,6 +10,17 @@ const app = express();
 
 app.use(bodyParser.json());
 
+// handle cors
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // allows any domain to access tho backend
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  ); // headers which should be sent by the client
+  res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE'); // allows these methods
+  next();
+});
+
 app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
 

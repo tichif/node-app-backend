@@ -109,7 +109,7 @@ exports.createPlace = async (req, res, next) => {
     // otherwise, there will be a rollback
     session.commitTransaction();
   } catch (err) {
-    const error = new HttpError(err, 500);
+    const error = new HttpError('Something went wrong !!!', 500);
     return next(error);
   }
   res.status(201).json({ place: createdPlace });
@@ -177,7 +177,7 @@ exports.deletePlace = async (req, res, next) => {
     await place.creator.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
-    const error = new HttpError(err, 500);
+    const error = new HttpError('Something went wrong !!!', 500);
     return next(error);
   }
 

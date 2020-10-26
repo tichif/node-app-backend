@@ -20,10 +20,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  places: {
-    type: String,
-    required: true,
-  },
+  places: [
+    {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: 'Place',
+    },
+  ],
 });
 
 // query the email faster than possible

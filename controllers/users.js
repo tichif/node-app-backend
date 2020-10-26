@@ -25,7 +25,7 @@ exports.signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -49,7 +49,7 @@ exports.signup = async (req, res, next) => {
     image:
       'https://www.liberaldictionary.com/wp-content/uploads/2018/12/men-1.jpg',
     password,
-    places,
+    places: [],
   });
 
   try {

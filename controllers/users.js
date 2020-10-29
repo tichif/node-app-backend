@@ -79,5 +79,10 @@ exports.login = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ message: 'Login !!!' });
+  res
+    .status(200)
+    .json({
+      message: 'Login !!!',
+      user: existingUser.toObject({ getters: true }),
+    });
 };

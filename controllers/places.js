@@ -85,7 +85,7 @@ exports.createPlace = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (err) {
     const error = new HttpError('Something went wrong', 500);
     return next(error);

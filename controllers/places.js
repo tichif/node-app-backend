@@ -136,6 +136,14 @@ exports.updatePlace = async (req, res, next) => {
     return next(error);
   }
 
+  if (place.creator.toString() !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to perform this request.',
+      401
+    );
+    return next(error);
+  }
+
   place.title = title;
   place.description = description;
 
@@ -165,6 +173,14 @@ exports.deletePlace = async (req, res, next) => {
 
   if (!place) {
     const error = new HttpError("The place doesn't exist", 404);
+    return next(error);
+  }
+
+  if (place.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to perform this request.',
+      401
+    );
     return next(error);
   }
 

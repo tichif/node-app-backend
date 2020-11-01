@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -9,6 +12,9 @@ const usersRoutes = require('./routes/users');
 const app = express();
 
 app.use(bodyParser.json());
+
+// Serving files stactically
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 // handle cors
 app.use((req, res, next) => {
@@ -32,6 +38,11 @@ app.use((req, res, next) => {
 
 // Error handling middleware
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    }); // delete the file
+  }
   if (res.headerSent) {
     return next(error);
   }

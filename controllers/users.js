@@ -46,8 +46,7 @@ exports.signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image:
-      'https://www.liberaldictionary.com/wp-content/uploads/2018/12/men-1.jpg',
+    image: req.file.path,
     password,
     places: [],
   });
@@ -79,10 +78,8 @@ exports.login = async (req, res, next) => {
     return next(error);
   }
 
-  res
-    .status(200)
-    .json({
-      message: 'Login !!!',
-      user: existingUser.toObject({ getters: true }),
-    });
+  res.status(200).json({
+    message: 'Login !!!',
+    user: existingUser.toObject({ getters: true }),
+  });
 };
